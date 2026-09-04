@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - Mitra</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-container">
+  <!-- Top Dynamic Navbar -->
+  <div id="navbar-root"></div>
+
+  <main class="main-content">
+    <div class="single-column-grid">
+      <!-- Profile Header (Avatar, Name, Bio, Stats, Actions) -->
+      <section id="profile-header-container">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+      </section>
+
+      <!-- Section Tabs (Posts vs Saved Posts) -->
+      <div style="display:flex; gap:1rem; border-bottom:1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <button onclick="switchProfileTab('posts')" id="tab-posts-btn" class="btn btn-sm btn-primary">Posts</button>
+        <button onclick="switchProfileTab('saved')" id="tab-saved-btn" class="btn btn-sm btn-outline">🔖 Saved Posts</button>
+      </div>
+
+      <!-- User Posts List -->
+      <section id="profile-posts-container">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Edit Profile Modal Dialog -->
+  <div class="modal-overlay" id="edit-profile-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Mitra Profile</h3>
+        <button onclick="closeEditProfileModal()" class="btn-close-modal">✕</button>
+      </div>
+
+      <form id="edit-profile-form" enctype="multipart/form-data">
+        <div class="form-group">
+          <label class="form-label" for="edit-name-input">Full Name *</label>
+          <input type="text" id="edit-name-input" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-username-input">Username *</label>
+          <input type="text" id="edit-username-input" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-bio-input">Bio</label>
+          <textarea id="edit-bio-input" class="form-textarea" placeholder="Tell us about yourself..." style="min-height: 80px;"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="edit-picture-file">Upload Profile Picture (MinIO Storage)</label>
+          <input type="file" id="edit-picture-file" class="form-input" accept="image/jpeg,image/jpg,image/png,image/webp">
+          <small style="color:var(--text-muted); font-size:0.78rem;">Uploads image to MinIO S3 storage bucket. Max size: 5MB.</small>
+        </div>
+
+        <!-- Privacy Setting Toggle -->
+        <div class="form-group" style="padding:0.75rem 1rem; background:rgba(11,15,25,0.4); border-radius:var(--radius-md); border:1px solid var(--border-color);">
+          <label style="display:flex; align-items:center; gap:0.75rem; cursor:pointer; font-weight:600; font-size:0.92rem;">
+            <input type="checkbox" id="edit-privacy-toggle" style="width:18px; height:18px; accent-color:var(--primary);">
+            <span>🔒 Private Account</span>
+          </label>
+          <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:0.35rem; margin-left:2rem;">
+            When active, only users you approve can view your posts and photos.
+          </small>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 0.75rem; justify-content: space-between; align-items:center; margin-top: 1.75rem;">
+          <button type="button" onclick="handleDeleteAccount()" class="btn btn-danger btn-sm" title="Permanently delete account">
+            🗑️ Delete Account
+          </button>
+          
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" onclick="closeEditProfileModal()" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/auth.js?v=2"></script>
+  <script src="js/feed.js?v=2"></script>
+  <script src="js/profile.js?v=2"></script>
+</body>
+</html>

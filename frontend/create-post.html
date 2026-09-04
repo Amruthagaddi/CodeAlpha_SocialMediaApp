@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Post - Mitra</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-container">
+  <!-- Top Dynamic Navbar -->
+  <div id="navbar-root"></div>
+
+  <main class="main-content">
+    <div class="single-column-grid">
+      <div class="card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 800;">Create a Post on Mitra</h2>
+          <a href="index.html" class="btn btn-outline btn-sm">Cancel</a>
+        </div>
+
+        <form id="create-post-form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="form-label" for="post-content-input">What's on your mind?</label>
+            <textarea id="post-content-input" class="form-textarea" placeholder="Write your post..." required></textarea>
+            <div style="display: flex; justify-content: flex-end; margin-top: 0.35rem;">
+              <span id="char-counter" style="font-size: 0.78rem; color: var(--text-muted);">0/2000</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="post-image-file">Add Images (Optional - Up to 4)</label>
+            <input type="file" id="post-image-file" class="form-input" accept="image/jpeg,image/jpg,image/png,image/webp" multiple>
+            <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:0.25rem;">Images are uploaded to MinIO storage bucket. Max 4 photos, 5MB each.</small>
+          </div>
+
+          <div class="form-group" style="margin-top:0.75rem;">
+            <label class="form-label" for="post-image-url">Or Image URL</label>
+            <input type="url" id="post-image-url" class="form-input" placeholder="https://example.com/image.jpg">
+          </div>
+
+          <!-- Live Image Preview Box -->
+          <div id="image-preview-container" class="post-image-container" style="display: none; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.8rem; color: var(--text-muted); padding: 0.5rem 0.75rem;">Live Image Preview:</p>
+            <img id="image-preview" src="" alt="Preview" class="post-image" onerror="this.onerror=null; this.parentElement.style.display='none';">
+          </div>
+
+          <button type="submit" id="submit-post-btn" class="btn btn-primary btn-full">
+            <span id="btn-text">Post</span>
+            <div id="btn-spinner" class="spinner" style="width: 20px; height: 20px; display: none; margin: 0 auto;"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script src="js/posts.js"></script>
+</body>
+</html>

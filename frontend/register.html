@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Your Mitra Profile</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card" style="max-width: 500px;">
+    <div class="auth-header">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <svg style="width:38px; height:38px; color:var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <span class="auth-title" style="margin-bottom:0;"><span class="brand-gradient">MITRA</span></span>
+      </div>
+      <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.25rem;">Create Your Mitra Profile</h3>
+      <p class="auth-subtitle">You can add your profile picture and bio now or skip and add them later.</p>
+    </div>
+
+    <form id="register-form" enctype="multipart/form-data">
+      <div class="form-group">
+        <label class="form-label" for="name-input">Full Name *</label>
+        <input type="text" id="name-input" class="form-input" placeholder="e.g. Aarav Sharma" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+        <div class="form-group">
+          <label class="form-label" for="username-input">Username *</label>
+          <input type="text" id="username-input" class="form-input" placeholder="aarav_s" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email-input">Email Address *</label>
+          <input type="email" id="email-input" class="form-input" placeholder="aarav@example.com" required>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+        <div class="form-group">
+          <label class="form-label" for="password-input">Password *</label>
+          <input type="password" id="password-input" class="form-input" placeholder="Min. 6 chars" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirm-password-input">Confirm Password *</label>
+          <input type="password" id="confirm-password-input" class="form-input" placeholder="Re-enter password" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="profile-picture-input">Profile Picture (Optional)</label>
+        <input type="file" id="profile-picture-input" class="form-input" accept="image/jpeg,image/jpg,image/png,image/webp">
+        <small style="color:var(--text-muted); font-size:0.78rem;">Uploads directly to MinIO bucket. Max size: 5MB.</small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="bio-input">Bio (Optional)</label>
+        <textarea id="bio-input" class="form-textarea" placeholder="Tell us about yourself..." style="min-height: 70px;"></textarea>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-top: 1.5rem;">
+        <button type="submit" id="register-btn" class="btn btn-primary btn-full">
+          <span id="btn-text">Create Account</span>
+          <div id="btn-spinner" class="spinner" style="width: 20px; height: 20px; display: none; margin: 0 auto;"></div>
+        </button>
+
+        <button type="button" id="skip-btn" class="btn btn-secondary btn-full">
+          Skip Profile Setup
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="login.html" style="font-weight: 700;">Login</a></p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    const registerForm = document.getElementById('register-form');
+    const registerBtn = document.getElementById('register-btn');
+    const skipBtn = document.getElementById('skip-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+
+    async function handleRegistration(isSkipping = false) {
+      const name = document.getElementById('name-input').value.trim();
+      const username = document.getElementById('username-input').value.trim();
+      const email = document.getElementById('email-input').value.trim();
+      const password = document.getElementById('password-input').value;
+      const confirmPassword = document.getElementById('confirm-password-input').value;
+      const profilePicInput = document.getElementById('profile-picture-input');
+      const bio = document.getElementById('bio-input').value.trim();
+
+      if (!name || !username || !email || !password || !confirmPassword) {
+        showToast('Please fill in all required fields marked with *', 'error');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast('Password must be at least 6 characters long.', 'error');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('password', password);
+      formData.append('confirmPassword', confirmPassword);
+
+      if (isSkipping) {
+        formData.append('skipProfileSetup', 'true');
+      } else {
+        if (bio) formData.append('bio', bio);
+        if (profilePicInput.files && profilePicInput.files[0]) {
+          formData.append('profilePicture', profilePicInput.files[0]);
+        }
+      }
+
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+      registerBtn.disabled = true;
+      skipBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Registration failed');
+        }
+
+        setToken(data.token);
+        setStoredUser(data.user);
+        showToast('Welcome to Mitra, ' + data.user.name + '!', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
+
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btnText.style.display = 'block';
+        btnSpinner.style.display = 'none';
+        registerBtn.disabled = false;
+        skipBtn.disabled = false;
+      }
+    }
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      handleRegistration(false);
+    });
+
+    skipBtn.addEventListener('click', () => {
+      handleRegistration(true);
+    });
+  </script>
+</body>
+</html>

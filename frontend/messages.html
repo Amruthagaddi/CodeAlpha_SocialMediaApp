@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct Messages - Mitra</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="app-container">
+  <!-- Top Dynamic Navbar -->
+  <div id="navbar-root"></div>
+
+  <main class="main-content">
+    <div class="chat-container">
+      <!-- Left Conversations List Sidebar -->
+      <aside class="chat-sidebar">
+        <div class="chat-sidebar-header">
+          Messages
+        </div>
+        <div class="conversation-list" id="conversations-list-container">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Right 1-on-1 Chat Thread Window -->
+      <section class="chat-window">
+        <!-- Active Chat Recipient Header -->
+        <div class="chat-header" id="chat-header-container">
+          <span style="color:var(--text-muted); font-size:0.9rem;">Select a contact on the left to start messaging</span>
+        </div>
+
+        <!-- Messages Thread Body -->
+        <div class="chat-messages-body" id="chat-messages-body">
+          <div class="empty-state" style="background:transparent; border:none; margin:auto;">
+            <div class="empty-icon">💬</div>
+            <h4 class="empty-title">1-on-1 Direct Messaging</h4>
+            <p class="empty-subtitle">Connect with followers and mutual companions on Mitra.</p>
+          </div>
+        </div>
+
+        <!-- Message Send Bar -->
+        <form class="chat-input-bar" id="chat-input-form" style="display:none;">
+          <input type="text" id="chat-text-input" class="form-input" placeholder="Write a message..." autocomplete="off" required>
+          <button type="submit" class="btn btn-primary btn-sm">Send</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/messages.js"></script>
+</body>
+</html>

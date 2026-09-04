@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Mitra</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <svg style="width:38px; height:38px; color:var(--primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <span class="auth-title" style="margin-bottom:0;"><span class="brand-gradient">MITRA</span></span>
+      </div>
+      <p class="auth-subtitle">Welcome back! Sign in to connect with your companions</p>
+    </div>
+
+    <form id="login-form">
+      <div class="form-group">
+        <label class="form-label" for="login-input">Email or Username</label>
+        <input type="text" id="login-input" class="form-input" placeholder="Enter your email or username" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password-input">Password</label>
+        <div class="input-wrapper">
+          <input type="password" id="password-input" class="form-input" placeholder="••••••••" required>
+          <button type="button" id="toggle-password-btn" class="toggle-password">Show</button>
+        </div>
+      </div>
+
+      <button type="submit" id="login-btn" class="btn btn-primary btn-full" style="margin-top: 1.5rem;">
+        <span id="btn-text">Login</span>
+        <div id="btn-spinner" class="spinner" style="width: 20px; height: 20px; display: none; margin: 0 auto;"></div>
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account? <a href="register.html" style="font-weight: 700;">Create one</a></p>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    if (isAuthenticated()) {
+      window.location.href = 'index.html';
+    }
+
+    const passwordInput = document.getElementById('password-input');
+    const togglePasswordBtn = document.getElementById('toggle-password-btn');
+
+    togglePasswordBtn.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePasswordBtn.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
+
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const login = document.getElementById('login-input').value.trim();
+      const password = passwordInput.value;
+
+      if (!login || !password) {
+        showToast('Please enter both email/username and password', 'error');
+        return;
+      }
+
+      btnText.style.display = 'none';
+      btnSpinner.style.display = 'block';
+      loginBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ login, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Login failed');
+        }
+
+        setToken(data.token);
+        setStoredUser(data.user);
+        showToast('Welcome back, ' + data.user.name + '!', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 500);
+
+      } catch (err) {
+        showToast(err.message, 'error');
+      } finally {
+        btnText.style.display = 'block';
+        btnSpinner.style.display = 'none';
+        loginBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
